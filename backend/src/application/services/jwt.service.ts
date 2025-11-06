@@ -1,12 +1,14 @@
 // src/modules/auth/application/services/jwt.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { TokenPayload } from '../../domain/entities/token-payload.entity';
 import { JwtConstants } from 'src/infrastructure/common/constants/jwt.constants';
 
 @Injectable()
 export class JwtService {
-  constructor(private readonly nestJwtService: NestJwtService) {}
+  constructor(
+    @Inject(NestJwtService) private readonly nestJwtService: NestJwtService,
+  ) {}
 
   /**
    * Gerar Access Token (curta duração)

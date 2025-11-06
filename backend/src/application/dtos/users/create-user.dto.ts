@@ -8,6 +8,9 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
+  @IsString()
+  password: string;
+
   @IsNumber()
   @Min(18)
   @Max(120)

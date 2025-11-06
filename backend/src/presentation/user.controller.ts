@@ -53,7 +53,12 @@ export class UserController {
   })
   async create(@Body() dto: CreateUserDto): Promise<{ message: string }> {
     try {
-      const command = new CreateUserCommand(dto.name, dto.email, dto.age);
+      const command = new CreateUserCommand(
+        dto.name,
+        dto.email,
+        dto.password,
+        dto.age,
+      );
       await this.commandBus.execute(command);
       return { message: 'Usuário criado com sucesso' };
     } catch (error) {

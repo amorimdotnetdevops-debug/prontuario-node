@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/common/services/redis.service.ts
 import {
   Injectable,
@@ -32,6 +33,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         db: redisConfig.db,
         retryStrategy: (times) => {
+          // Limitar número de tentativas para evitar loop infinito
+          if (times > 5) {
+            return null; // Parar de tentar reconectar após 5 tentativas
+          }
           const delay = Math.min(times * 50, 2000);
           return delay;
         },
@@ -42,6 +47,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
           }
           return false;
         },
+        maxRetriesPerRequest: 3, // Limitar retries por request
+        lazyConnect: true, // Não conectar automaticamente na criação
+        keepAlive: 0, // Desabilitar keep-alive
       };
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -68,12 +76,25 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         this.isConnected = false;
       });
 
-      // Testar conexão
-      await this.client.ping();
+      // Tentar conectar, mas não falhar se não conseguir
+      try {
+        await this.client.connect();
+        // Testar conexão
+        await this.client.ping();
+      } catch (connectError) {
+        this.logger.warn(
+          '⚠️  Redis não disponível. Serviço funcionando em modo degradado.',
+        );
+        this.isConnected = false;
+      }
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      this.logger.error('Falha ao conectar ao Redis:', error.message);
-      throw error;
+      this.logger.error('Falha ao configurar Redis:', error.message);
+      this.logger.warn(
+        '⚠️  Redis será desabilitado. Serviço funcionando em modo degradado.',
+      );
+      this.isConnected = false;
+      // Não lançar erro para não impedir o servidor de iniciar
     }
   }
 
