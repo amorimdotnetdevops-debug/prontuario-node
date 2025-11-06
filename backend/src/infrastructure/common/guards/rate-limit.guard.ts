@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable prettier/prettier */
 // src/common/guards/rate-limit.guard.ts
 import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common';
 import { RedisService } from '../services/redis.service';
@@ -7,6 +10,7 @@ export class RateLimitGuard implements CanActivate {
   constructor(private readonly redisService: RedisService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+     
     const request = context.switchToHttp().getRequest();
     const email = request.body.email;
     

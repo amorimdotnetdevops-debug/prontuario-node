@@ -5,13 +5,7 @@ import { User } from 'src/domain/entities/user.entity';
 
 export class UserMapper {
   static toDomain(raw: any): User {
-    const user = new User(
-      raw.id,
-      raw.name,
-      raw.email,
-      raw.passwordHash,
-      raw.age,
-    );
+    const user = new User(raw.id, raw.name, raw.email, raw.age);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     user.createdAt = raw.createdAt;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -35,7 +29,6 @@ export class UserMapper {
       id: user.id,
       name: user.name,
       email: user.email,
-      passwordHash: user.passwordHash,
       age: user.age,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,

@@ -18,9 +18,6 @@ export class UserSchema {
   @Column('varchar', { unique: true })
   email: string;
 
-  @Column('varchar')
-  passwordHash: string;
-
   @Column('int')
   age: number;
 

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/modules/users/presentation/user.controller.ts
 import {
   Controller,
@@ -30,10 +31,39 @@ export class UserController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiParam(
+    {
+      name: 'nome',
+      type: 'string',
+      description: 'Nome do usuário',
+      example: 'João da Silva',
+    })
+    @ApiParam(
+    {
+      name: 'email',
+      type: 'string',
+      description: 'Email do usuário',
+      example: 'user@example.com',
+    })
+    @ApiParam(
+    {
+      name: 'password',
+      type: 'string',
+      description: 'Senha do usuário',
+      example: 'password123',
+    })
+    @ApiParam(
+    {
+      name: 'age',
+      type: 'number',
+      description: 'Idade do usuário',
+      example: 30,
+    }
+  ) 
   @ApiOperation({
     summary: 'Criar novo usuário',
     description: 'Cria um novo usuário no sistema',

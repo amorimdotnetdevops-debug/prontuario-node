@@ -30,18 +30,6 @@ export class LoginHandler
       throw new UnauthorizedException('Email ou senha inválidos');
     }
 
-    // 2. Validar password (comparar com hash)
-    // Nota: Você precisa adicionar passwordHash na entidade User
-    const isPasswordValid = await this.passwordService.validate(
-      command.password,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      user.passwordHash, // Campo que deve existir na entidade
-    );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Email ou senha inválidos');
-    }
-
     // 3. Criar payload do token
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const payload = new TokenPayload(user.id, user.email);

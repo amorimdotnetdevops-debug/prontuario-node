@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // src/common/pipes/validation.pipe.ts
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { validate, ValidationError } from 'class-validator';
