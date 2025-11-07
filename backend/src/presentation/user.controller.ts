@@ -51,13 +51,6 @@ export class UserController {
     })
     @ApiParam(
     {
-      name: 'password',
-      type: 'string',
-      description: 'Senha do usuário',
-      example: 'password123',
-    })
-    @ApiParam(
-    {
       name: 'age',
       type: 'number',
       description: 'Idade do usuário',
@@ -86,7 +79,6 @@ export class UserController {
       const command = new CreateUserCommand(
         dto.name,
         dto.email,
-        dto.password,
         dto.age,
       );
       await this.commandBus.execute(command);
