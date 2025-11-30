@@ -120,11 +120,7 @@ export class UserController {
         schema: { $ref: getSchemaPath(ErrorResponseDto) },
         examples: {
           ErroDadosInvalidos: {
-            value: {
-              statusCode: 400,
-              message: 'Dados inválidos',
-              timestamp: '2025-01-01T12:00:00Z',
-            },
+            value: { message: 'Dados inválidos', code: 'VALIDATION_ERROR' },
           },
         },
       },
@@ -216,11 +212,7 @@ export class UserController {
         schema: { $ref: getSchemaPath(ErrorResponseDto) },
         examples: {
           ErroNaoEncontrado: {
-            value: {
-              statusCode: 404,
-              message: 'Usuário não encontrado',
-              timestamp: '2025-01-01T12:00:00Z',
-            },
+            value: { message: 'Usuário não encontrado', code: 'USER_NOT_FOUND' },
           },
         },
       },

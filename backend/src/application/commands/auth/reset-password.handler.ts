@@ -1,5 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, BadRequestException } from '@nestjs/common';
+import { ErrorCode } from 'src/application/dtos/common/error-response.dto';
 import { ResetPasswordCommand } from './reset-password.command';
 import * as userRepositoryInterface from 'src/domain/interfaces/repositories/user.repository.interface';
 import { PasswordResetTokenRepository } from 'src/infrastructure/database/persistence/password-reset-token.repository';
@@ -19,11 +20,17 @@ export class ResetPasswordHandler
   async execute(command: ResetPasswordCommand): Promise<void> {
     const row = await this.resetRepo.findValid(command.token);
     if (!row) {
-      throw new BadRequestException('Token inválido ou expirado');
+      throw new BadRequestException({
+        message: 'Token inválido ou expirado',
+        code: ErrorCode.AUTH_TOKEN_INVALID,
+      });
     }
     const user = await this.userRepository.findById(row.userId);
     if (!user) {
-      throw new BadRequestException('Usuário não encontrado');
+      throw new BadRequestException({
+        message: 'Usuário não encontrado',
+        code: ErrorCode.USER_NOT_FOUND,
+      });
     }
     const hash = await this.passwordService.hash(command.newPassword);
     user.passwordHash = hash;

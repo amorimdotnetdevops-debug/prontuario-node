@@ -1,0 +1,133 @@
+{
+  "info": {
+    "name": "Prontuario API - Auth & Users",
+    "_postman_id": "a2f0c0c5-7c22-4df8-8dd1-999900001111",
+    "description": "Coleção de endpoints de autenticação e usuários",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+            "var json = pm.response.json();",
+            "pm.environment.set('accessToken', json.accessToken);",
+            "pm.environment.set('refreshToken', json.refreshToken);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Auth - Me (Bearer accessToken)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+        "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth","me"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', function () { pm.response.to.have.status(200); });"] }
+      }]
+    },
+    {
+      "name": "Auth - Refresh",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/auth/refresh", "host": ["{{baseUrl}}"], "path": ["auth","refresh"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+            "var json = pm.response.json();",
+            "pm.environment.set('accessToken', json.accessToken);",
+            "pm.environment.set('refreshToken', json.refreshToken);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Auth - Logout (Bearer refreshToken)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{refreshToken}}" }],
+        "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth","logout"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', function () { pm.response.to.have.status(200); });"] }
+      }]
+    },
+    {
+      "name": "Users - Criar",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"{{userName}}\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\",\n  \"age\": {{userAge}}\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+            "var json = pm.response.json();",
+            "pm.environment.set('userId', json.id);"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Users - Obter por ID",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users","{{userId}}"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', function () { pm.response.to.have.status(200); });"] }
+      }]
+    },
+    {
+      "name": "Users - Listar",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": ["pm.test('Status 200', function () { pm.response.to.have.status(200); });"] }
+      }]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1" },
+    { "key": "email", "value": "mcmoriam@gmail.com.com" },
+    { "key": "password", "value": "mcM0riam" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "userName", "value": "João da Silva" },
+    { "key": "userEmail", "value": "user@example.com" },
+    { "key": "userPassword", "value": "Passw0rd!" },
+    { "key": "userAge", "value": "30" },
+    { "key": "userId", "value": "" }
+  ]
+}

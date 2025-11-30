@@ -3,6 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoginCommand } from './login.command';
 import { AuthResponseDto } from 'src/application/dtos/auth/auth-response.dto';
 import { Inject, UnauthorizedException } from '@nestjs/common';
+import { ErrorCode } from 'src/application/dtos/common/error-response.dto';
 import { JwtService } from 'src/application/services/jwt.service';
 import * as userRepositoryInterface from 'src/domain/interfaces/repositories/user.repository.interface';
 import { PasswordService } from 'src/infrastructure/services/password.service';
@@ -26,7 +27,10 @@ export class LoginHandler
     // 1. Buscar usuário por email
     const user = await this.userRepository.findByEmail(command.email);
     if (!user) {
-      throw new UnauthorizedException('Email ou senha inválidos');
+      throw new UnauthorizedException({
+        message: 'Email ou senha inválidos',
+        code: ErrorCode.AUTH_INVALID_CREDENTIALS,
+      });
     }
 
     const isValid = await this.passwordService.validate(
@@ -34,7 +38,10 @@ export class LoginHandler
       user.passwordHash,
     );
     if (!isValid) {
-      throw new UnauthorizedException('Email ou senha inválidos');
+      throw new UnauthorizedException({
+        message: 'Email ou senha inválidos',
+        code: ErrorCode.AUTH_INVALID_CREDENTIALS,
+      });
     }
 
     // 3. Criar payload do token

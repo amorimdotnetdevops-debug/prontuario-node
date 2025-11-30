@@ -1,5 +1,6 @@
 // src/modules/auth/application/strategies/refresh-jwt.strategy.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ErrorCode } from 'src/application/dtos/common/error-response.dto';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtConstants } from 'src/infrastructure/common/constants/jwt.constants';
@@ -19,7 +20,10 @@ export class RefreshJwtStrategy extends PassportStrategy(
 
   validate(payload: { userId?: string; type?: string }): { userId: string } {
     if (!payload || !payload.userId || payload.type !== 'refresh') {
-      throw new UnauthorizedException('Refresh token inválido');
+      throw new UnauthorizedException({
+        message: 'Refresh token inválido',
+        code: ErrorCode.AUTH_REFRESH_INVALID,
+      });
     }
 
     return { userId: payload.userId };

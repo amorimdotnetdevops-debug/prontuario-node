@@ -1,5 +1,6 @@
 // src/common/guards/jwt.guard.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ErrorCode } from 'src/application/dtos/common/error-response.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
@@ -10,7 +11,10 @@ export class JwtGuard extends AuthGuard('jwt') {
    */
   handleRequest(err, user) {
     if (err || !user) {
-      throw new UnauthorizedException('Token não fornecido ou inválido');
+      throw new UnauthorizedException({
+        message: 'Não autorizado',
+        code: ErrorCode.AUTH_UNAUTHORIZED,
+      });
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return user;

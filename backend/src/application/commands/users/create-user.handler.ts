@@ -1,6 +1,7 @@
 // src/modules/users/application/commands/create-user.handler.ts
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
+import { BadRequestException, Inject } from '@nestjs/common';
+import { ErrorCode } from 'src/application/dtos/common/error-response.dto';
 import { CreateUserCommand } from './create-user.command';
 import { v4 as uuidv4 } from 'uuid';
 import * as userRepositoryInterface from 'src/domain/interfaces/repositories/user.repository.interface';
@@ -21,7 +22,10 @@ export class CreateUserHandler
     // Verificar se email já existe
     const existingUser = await this.userRepository.findByEmail(command.email);
     if (existingUser) {
-      throw new Error('Email já cadastrado');
+      throw new BadRequestException({
+        message: 'Email já cadastrado',
+        code: ErrorCode.USER_EMAIL_CONFLICT,
+      });
     }
 
     const passwordHash = await this.passwordService.hash(command.password);

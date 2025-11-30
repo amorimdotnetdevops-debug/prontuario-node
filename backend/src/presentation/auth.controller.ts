@@ -116,9 +116,8 @@ export class AuthController {
         examples: {
           ErroCredenciaisInvalidas: {
             value: {
-              statusCode: 400,
               message: 'Email ou senha inválidos',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'AUTH_INVALID_CREDENTIALS',
             },
           },
         },
@@ -132,7 +131,10 @@ export class AuthController {
       'application/json': {
         examples: {
           ErroCredenciaisInvalidas: {
-            value: { statusCode: 400, message: 'Email ou senha inválidos' },
+            value: {
+              message: 'Email ou senha inválidos',
+              code: 'AUTH_INVALID_CREDENTIALS',
+            },
           },
         },
       },
@@ -210,9 +212,8 @@ export class AuthController {
         examples: {
           ErroRefreshInvalido: {
             value: {
-              statusCode: 400,
               message: 'Refresh token inválido',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'AUTH_REFRESH_INVALID',
             },
           },
         },
@@ -226,7 +227,10 @@ export class AuthController {
       'application/json': {
         examples: {
           ErroRefreshInvalido: {
-            value: { statusCode: 400, message: 'Refresh token inválido' },
+            value: {
+              message: 'Refresh token inválido',
+              code: 'AUTH_REFRESH_INVALID',
+            },
           },
         },
       },
@@ -263,9 +267,8 @@ export class AuthController {
         examples: {
           ErroSemToken: {
             value: {
-              statusCode: 401,
               message: 'Não autorizado',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'AUTH_UNAUTHORIZED',
             },
           },
         },
@@ -296,7 +299,7 @@ export class AuthController {
       'application/json': {
         examples: {
           ErroSemToken: {
-            value: { statusCode: 401, message: 'Não autorizado' },
+            value: { message: 'Não autorizado', code: 'AUTH_UNAUTHORIZED' },
           },
         },
       },
@@ -332,16 +335,14 @@ export class AuthController {
         examples: {
           ErroSemToken: {
             value: {
-              statusCode: 401,
               message: 'Não autorizado',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'AUTH_UNAUTHORIZED',
             },
           },
           ErroTokenIncorreto: {
             value: {
-              statusCode: 401,
               message: 'Refresh token não fornecido ou inválido',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'AUTH_REFRESH_INVALID',
             },
           },
         },
@@ -366,12 +367,12 @@ export class AuthController {
       'application/json': {
         examples: {
           ErroSemToken: {
-            value: { statusCode: 401, message: 'Não autorizado' },
+            value: { message: 'Não autorizado', code: 'AUTH_UNAUTHORIZED' },
           },
           ErroTokenIncorreto: {
             value: {
-              statusCode: 401,
               message: 'Refresh token não fornecido ou inválido',
+              code: 'AUTH_REFRESH_INVALID',
             },
           },
         },
@@ -410,9 +411,8 @@ export class AuthController {
         examples: {
           ErroAusenciaEmail: {
             value: {
-              statusCode: 400,
               message: 'Email é obrigatório',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'VALIDATION_ERROR',
             },
           },
         },
@@ -442,7 +442,7 @@ export class AuthController {
       'application/json': {
         examples: {
           ErroAusenciaEmail: {
-            value: { statusCode: 400, message: 'Email é obrigatório' },
+            value: { message: 'Email é obrigatório', code: 'VALIDATION_ERROR' },
           },
         },
       },
@@ -496,9 +496,8 @@ export class AuthController {
         examples: {
           ErroDadosInvalidos: {
             value: {
-              statusCode: 400,
               message: 'Requisição inválida',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'BAD_REQUEST',
             },
           },
         },
@@ -525,7 +524,7 @@ export class AuthController {
       'application/json': {
         examples: {
           ErroDadosInvalidos: {
-            value: { statusCode: 400, message: 'Requisição inválida' },
+            value: { message: 'Requisição inválida', code: 'BAD_REQUEST' },
           },
         },
       },
@@ -577,9 +576,8 @@ export class AuthController {
         examples: {
           ErroTokenInvalido: {
             value: {
-              statusCode: 400,
               message: 'Token inválido ou expirado',
-              timestamp: '2025-01-01T12:00:00Z',
+              code: 'AUTH_TOKEN_INVALID',
             },
           },
         },
@@ -604,7 +602,10 @@ export class AuthController {
       'application/json': {
         examples: {
           ErroTokenInvalido: {
-            value: { statusCode: 400, message: 'Token inválido ou expirado' },
+            value: {
+              message: 'Token inválido ou expirado',
+              code: 'AUTH_TOKEN_INVALID',
+            },
           },
         },
       },

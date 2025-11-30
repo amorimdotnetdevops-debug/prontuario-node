@@ -1,6 +1,7 @@
 // src/modules/auth/application/commands/refresh-token.handler.ts
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject, UnauthorizedException } from '@nestjs/common';
+import { ErrorCode } from 'src/application/dtos/common/error-response.dto';
 import { RefreshTokenCommand } from './refresh-token.command';
 import { AuthResponseDto } from 'src/application/dtos/auth/auth-response.dto';
 import * as userRepositoryInterface from 'src/domain/interfaces/repositories/user.repository.interface';
@@ -24,7 +25,10 @@ export class RefreshTokenHandler
     // 1. Validar refresh token
     const payload = this.jwtService.validateRefreshToken(command.refreshToken);
     if (!payload) {
-      throw new UnauthorizedException('Refresh token inválido');
+      throw new UnauthorizedException({
+        message: 'Refresh token inválido',
+        code: ErrorCode.AUTH_REFRESH_INVALID,
+      });
     }
 
     // 2. Verificar se token não foi revogado no banco
@@ -33,13 +37,19 @@ export class RefreshTokenHandler
       payload.userId,
     );
     if (!isValid) {
-      throw new UnauthorizedException('Refresh token expirado ou revogado');
+      throw new UnauthorizedException({
+        message: 'Refresh token expirado ou revogado',
+        code: ErrorCode.AUTH_REFRESH_INVALID,
+      });
     }
 
     // 3. Buscar usuário
     const user = await this.userRepository.findById(payload.userId);
     if (!user) {
-      throw new UnauthorizedException('Usuário não encontrado');
+      throw new UnauthorizedException({
+        message: 'Usuário não encontrado',
+        code: ErrorCode.USER_NOT_FOUND,
+      });
     }
 
     // 4. Gerar novo access token
