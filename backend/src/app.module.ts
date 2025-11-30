@@ -5,6 +5,11 @@ import { AuthModule } from './modules/auth.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), DatabaseModule, UsersModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    UsersModule,
+    AuthModule,
+  ],
 })
 export class AppModule {}

@@ -17,13 +17,11 @@ export class RefreshJwtStrategy extends PassportStrategy(
     });
   }
 
-  validate(payload: any): { userId: string } {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (!payload || !payload.userId) {
+  validate(payload: { userId?: string; type?: string }): { userId: string } {
+    if (!payload || !payload.userId || payload.type !== 'refresh') {
       throw new UnauthorizedException('Refresh token inválido');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     return { userId: payload.userId };
   }
 }

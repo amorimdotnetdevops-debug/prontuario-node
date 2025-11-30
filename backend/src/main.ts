@@ -23,12 +23,19 @@ async function bootstrap() {
     .setTitle('Prontuario na Nuvem')
     .setDescription('Armazena dados de pacientes e médicos')
     .setVersion('1.0')
-    .addTag('users')
-    .addTag('auth')
+    .setContact('Prontuario na Nuvem', 'https://prontuario.example.com', 'contato@example.com')
+    .setLicense('MIT', 'https://opensource.org/licenses/MIT')
+    .addServer('http://localhost:3000/api/v1')
+    .addServer('https://api.prontuario.example.com/api/v1')
+    .addBearerAuth()
+    .addTag('Auth', 'Autenticação e gerenciamento de tokens')
+    .addTag('Users', 'Gestão de usuários')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/v1/docs', app, document);
+  SwaggerModule.setup('api/v1/docs', app, document, {
+    swaggerOptions: { persistAuthorization: true },
+  });
 
   await app.listen(3000);
   console.log('Aplicação rodando em http://localhost:3000/api/v1');

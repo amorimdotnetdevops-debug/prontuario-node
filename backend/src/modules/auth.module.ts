@@ -1,5 +1,6 @@
 // src/modules/auth/auth.module.ts
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -32,6 +33,7 @@ const queryHandlers = [GetLatestPasswordResetTokenHandler];
 
 @Module({
   imports: [
+    ConfigModule,
     TypeOrmModule.forFeature([RefreshTokenSchema, PasswordResetTokenSchema]),
     PassportModule,
     JwtModule.register({

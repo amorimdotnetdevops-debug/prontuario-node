@@ -18,7 +18,7 @@ export function createTypeOrmConfig(): TypeOrmModuleOptions {
     database: dbFile,
     entities: [UserSchema, RefreshTokenSchema, PasswordResetTokenSchema],
     synchronize: false,
-    migrations: [join(process.cwd(), 'src', 'infrastructure', 'database', 'migrations', '*.ts')],
+    migrations: [join(process.cwd(), 'dist', 'infrastructure', 'database', 'migrations', '*.js')],
     migrationsRun: true,
     logging: false,
   };

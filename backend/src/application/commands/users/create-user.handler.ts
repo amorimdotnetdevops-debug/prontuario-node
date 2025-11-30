@@ -8,14 +8,16 @@ import { User } from 'src/domain/entities/user.entity';
 import { PasswordService } from 'src/infrastructure/services/password.service';
 
 @CommandHandler(CreateUserCommand)
-export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
+export class CreateUserHandler
+  implements ICommandHandler<CreateUserCommand, string>
+{
   constructor(
     @Inject(userRepositoryInterface.IUserRepositoryToken)
     private readonly userRepository: userRepositoryInterface.IUserRepository,
     private readonly passwordService: PasswordService,
   ) {}
 
-  async execute(command: CreateUserCommand): Promise<void> {
+  async execute(command: CreateUserCommand): Promise<string> {
     // Verificar se email já existe
     const existingUser = await this.userRepository.findByEmail(command.email);
     if (existingUser) {
@@ -33,5 +35,6 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 
     // Persistir
     await this.userRepository.create(user);
+    return user.id;
   }
 }
