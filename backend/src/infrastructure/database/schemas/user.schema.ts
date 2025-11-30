@@ -18,7 +18,7 @@ export class UserSchema {
   @Column('varchar', { unique: true })
   email: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: true })
   passwordHash: string;
 
   @Column('int')

@@ -9,7 +9,7 @@ export class UserMapper {
       raw.id,
       raw.name,
       raw.email,
-      raw.passwordHash,
+      raw.passwordHash ?? '',
       raw.age,
     );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

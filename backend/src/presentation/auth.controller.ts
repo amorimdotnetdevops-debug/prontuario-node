@@ -7,8 +7,9 @@ import {
   Get,
   HttpCode,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { TokenPayload } from '../domain/entities/token-payload.entity';
 import { LoginDto } from 'src/application/dtos/auth/login.dto';
 import { AuthResponseDto } from 'src/application/dtos/auth/auth-response.dto';
@@ -18,10 +19,18 @@ import { RefreshTokenCommand } from 'src/application/commands/auth/refresh-token
 import { JwtGuard } from 'src/infrastructure/common/guards/jwt.guard';
 import { CurrentUser } from 'src/infrastructure/common/decorators/current-user.decorator';
 import { JwtRefreshGuard } from 'src/infrastructure/common/guards/jwt-refresh.guard';
+import { RequestPasswordResetDto } from 'src/application/dtos/auth/request-password-reset.dto';
+import { ResetPasswordDto } from 'src/application/dtos/auth/reset-password.dto';
+import { RequestPasswordResetCommand } from 'src/application/commands/auth/request-password-reset.command';
+import { ResetPasswordCommand } from 'src/application/commands/auth/reset-password.command';
+import { GetLatestPasswordResetTokenQuery } from 'src/application/queries/auth/get-latest-password-reset-token.query';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   /**
    * POST /auth/login
@@ -38,9 +47,9 @@ export class AuthController {
         undefined, // ipAddress
       );
       return await this.commandBus.execute(command);
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      throw new BadRequestException(error.message);
+    } catch (error: unknown) {
+      const msg = typeof error === 'string' ? error : String(error);
+      throw new BadRequestException(msg);
     }
   }
 
@@ -54,9 +63,9 @@ export class AuthController {
     try {
       const command = new RefreshTokenCommand(dto.refreshToken);
       return await this.commandBus.execute(command);
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      throw new BadRequestException(error.message);
+    } catch (error: unknown) {
+      const msg = typeof error === 'string' ? error : String(error);
+      throw new BadRequestException(msg);
     }
   }
 
@@ -87,5 +96,57 @@ export class AuthController {
     // Implementação de logout revogando o token
     // (será adicionada no próximo passo)
     return { message: 'Logout realizado com sucesso' };
+  }
+
+  /**
+   * GET /auth/debug/password-reset-token?email=...
+   * Endpoint de debug para obter o último token de reset
+   * Não habilitar em produção
+   */
+  @Get('debug/password-reset-token')
+  @HttpCode(200)
+  async getLatestPasswordResetToken(@Query('email') email?: string) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new BadRequestException('Indisponível em produção');
+    }
+    if (!email) {
+      throw new BadRequestException('Email é obrigatório');
+    }
+    try {
+      const result = await this.queryBus.execute<
+        GetLatestPasswordResetTokenQuery,
+        { token: string; expiresAt: Date }
+      >(new GetLatestPasswordResetTokenQuery(email));
+      return { token: result.token, expiresAt: result.expiresAt };
+    } catch (error: unknown) {
+      const msg = typeof error === 'string' ? error : String(error);
+      throw new BadRequestException(msg);
+    }
+  }
+
+  @Post('request-password-reset')
+  @HttpCode(200)
+  async requestPasswordReset(@Body() dto: RequestPasswordResetDto) {
+    try {
+      const command = new RequestPasswordResetCommand(dto.email);
+      await this.commandBus.execute(command);
+      return { message: 'Se o email existir, o reset foi solicitado' };
+    } catch (error: unknown) {
+      const msg = typeof error === 'string' ? error : String(error);
+      throw new BadRequestException(msg);
+    }
+  }
+
+  @Post('reset-password')
+  @HttpCode(200)
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    try {
+      const command = new ResetPasswordCommand(dto.token, dto.newPassword);
+      await this.commandBus.execute(command);
+      return { message: 'Senha redefinida com sucesso' };
+    } catch (error: unknown) {
+      const msg = typeof error === 'string' ? error : String(error);
+      throw new BadRequestException(msg);
+    }
   }
 }
