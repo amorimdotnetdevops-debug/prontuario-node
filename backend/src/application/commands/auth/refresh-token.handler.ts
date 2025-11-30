@@ -53,7 +53,6 @@ export class RefreshTokenHandler
     const newRefreshToken = this.jwtService.generateRefreshToken(tokenPayload);
     const expiresAt = new Date();
     expiresAt.setSeconds(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       expiresAt.getSeconds() + JwtConstants.REFRESH_TOKEN_EXPIRATION_SECONDS,
     );
 

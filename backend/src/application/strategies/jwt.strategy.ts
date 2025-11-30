@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // src/modules/auth/application/strategies/jwt.strategy.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
@@ -20,17 +21,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * Validar payload do token
    * Este método é chamado automaticamente pelo Passport
    */
-  validate(payload: any): TokenPayload {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  validate(payload: { userId: string; email?: string; roles?: string[] }): TokenPayload {
     if (!payload || !payload.userId) {
       throw new UnauthorizedException('Token inválido');
     }
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       userId: payload.userId,
       email: '',
-      roles: [],
+      roles: [] as string[],
     };
   }
 }

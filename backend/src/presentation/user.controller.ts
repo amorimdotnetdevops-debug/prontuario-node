@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable prettier/prettier */
 // src/modules/users/presentation/user.controller.ts
 import {
@@ -23,6 +26,7 @@ import { CreateUserDto } from 'src/application/dtos/users/create-user.dto';
 import { UserDto } from 'src/application/dtos/users/user.dto';
 import { UserMapper } from 'src/application/mappers/users/user.mapper';
 import { GetUserQuery } from 'src/application/queries/users/get-user.query';
+import { GetUsersQuery } from 'src/application/queries/users/get-users.query';
 import { User } from 'src/domain/entities/user.entity';
 
 @ApiTags('Users')
@@ -42,21 +46,21 @@ export class UserController {
       description: 'Nome do usuário',
       example: 'João da Silva',
     })
-    @ApiParam(
+  @ApiParam(
     {
       name: 'email',
       type: 'string',
       description: 'Email do usuário',
       example: 'user@example.com',
     })
-    @ApiParam(
+  @ApiParam(
     {
       name: 'age',
       type: 'number',
       description: 'Idade do usuário',
       example: 30,
     }
-  ) 
+  )
   @ApiOperation({
     summary: 'Criar novo usuário',
     description: 'Cria um novo usuário no sistema',
@@ -79,14 +83,23 @@ export class UserController {
       const command = new CreateUserCommand(
         dto.name,
         dto.email,
+        dto.password,
         dto.age,
       );
       await this.commandBus.execute(command);
       return { message: 'Usuário criado com sucesso' };
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
       throw new BadRequestException(error.message);
     }
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Listar usuários' })
+  @ApiResponse({ status: 200, description: 'Lista de usuários', type: [User] })
+  async list(): Promise<UserDto[]> {
+    const users = await this.queryBus.execute<GetUsersQuery, User[]>(new GetUsersQuery());
+    return users.map((u) => UserMapper.toDto(u));
   }
 
   @Get(':id')
@@ -108,7 +121,7 @@ export class UserController {
   })
   async getById(@Param('id') id: string): Promise<UserDto> {
     const query = new GetUserQuery(id);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const user = await this.queryBus.execute(query);
     if (!user) {
       throw new BadRequestException('Usuário não encontrado');

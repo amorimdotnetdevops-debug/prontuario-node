@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateUserHandler } from 'src/application/commands/users/create-user.handler';
 import { GetUserHandler } from 'src/application/queries/users/get-user.handler';
+import { GetUsersHandler } from 'src/application/queries/users/get-users.handler';
 import { UserSchema } from 'src/infrastructure/database/schemas/user.schema';
 import { UserController } from 'src/presentation/user.controller';
 import { IUserRepositoryToken } from 'src/domain/interfaces/repositories/user.repository.interface';
@@ -11,7 +12,7 @@ import { UserRepository } from 'src/infrastructure/database/persistence/user.rep
 import { PasswordService } from 'src/infrastructure/services/password.service';
 
 const commandHandlers = [CreateUserHandler];
-const queryHandlers = [GetUserHandler];
+const queryHandlers = [GetUserHandler, GetUsersHandler];
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserSchema]), CqrsModule],

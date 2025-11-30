@@ -5,12 +5,14 @@ import { CreateUserCommand } from './create-user.command';
 import { v4 as uuidv4 } from 'uuid';
 import * as userRepositoryInterface from 'src/domain/interfaces/repositories/user.repository.interface';
 import { User } from 'src/domain/entities/user.entity';
+import { PasswordService } from 'src/infrastructure/services/password.service';
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   constructor(
     @Inject(userRepositoryInterface.IUserRepositoryToken)
     private readonly userRepository: userRepositoryInterface.IUserRepository,
+    private readonly passwordService: PasswordService,
   ) {}
 
   async execute(command: CreateUserCommand): Promise<void> {
@@ -20,8 +22,14 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       throw new Error('Email já cadastrado');
     }
 
-    // Criar entidade de domínio
-    const user = new User(uuidv4(), command.name, command.email, command.age);
+    const passwordHash = await this.passwordService.hash(command.password);
+    const user = new User(
+      uuidv4(),
+      command.name,
+      command.email,
+      passwordHash,
+      command.age,
+    );
 
     // Persistir
     await this.userRepository.create(user);

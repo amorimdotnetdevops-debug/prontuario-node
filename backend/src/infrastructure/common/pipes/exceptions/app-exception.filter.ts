@@ -14,7 +14,7 @@ import { BaseExceptionFilter } from '@nestjs/core';
 export class AppExceptionFilter extends BaseExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const response = ctx.getResponse();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;

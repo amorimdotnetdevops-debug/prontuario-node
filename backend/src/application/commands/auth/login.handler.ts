@@ -24,32 +24,36 @@ export class LoginHandler
 
   async execute(command: LoginCommand): Promise<AuthResponseDto> {
     // 1. Buscar usuário por email
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const user = await this.userRepository.findByEmail(command.email);
     if (!user) {
       throw new UnauthorizedException('Email ou senha inválidos');
     }
 
+    const isValid = await this.passwordService.validate(
+      command.password,
+      user.passwordHash,
+    );
+    if (!isValid) {
+      throw new UnauthorizedException('Email ou senha inválidos');
+    }
+
     // 3. Criar payload do token
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+
     const payload = new TokenPayload(user.id, user.email);
 
     // 4. Gerar tokens
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+
     const accessToken = this.jwtService.generateAccessToken(payload);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+
     const refreshToken = this.jwtService.generateRefreshToken(payload);
 
     // 5. Salvar refresh token no banco (para poder revogar depois)
     const expiresAt = new Date();
     expiresAt.setSeconds(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       expiresAt.getSeconds() + JwtConstants.REFRESH_TOKEN_EXPIRATION_SECONDS,
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await this.refreshTokenRepository.save(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       user.id,
       refreshToken,
       expiresAt,
@@ -58,11 +62,11 @@ export class LoginHandler
     );
 
     // 6. Retornar tokens
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
     return new AuthResponseDto(
       accessToken,
       refreshToken,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
       JwtConstants.ACCESS_TOKEN_EXPIRATION_SECONDS,
     );
   }
